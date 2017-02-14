@@ -12,13 +12,115 @@
 # 8. K-Means Clustering
 
 
-
 #Libraries & Path
 library(dplyr)
 library(tidyr)
 library(plyr)
 library(ggplot2)
-setwd('/Users/Diego/Desktop/Data/energy_transitions')
+library()
+setwd('/Users/diego/Desktop/Data/energy_transitions')
+
+ world_bank <- read.csv('world_bank_data.csv')
+ climatescope_invesments <- read.csv('country_investments_years.csv')
+ fossil_subsidies <- read.csv('fossil_subsidies.csv')
+ quality_governance <- read.csv('qog_bas_ts_jan17.csv')
+ quality_governance_II <- read.csv('qog_bas_cs_jan17.csv')
+ quality_governanceIII <- read.csv('qog_std_cs_jan17.csv')
+ quality_governanceIV <- read.csv('qog_std_ts_jan17.csv')
+
+ policies <- read.csv('renewable_policies_iea.csv')
+ eia_electricity <- read.csv('eia_electricity.csv')
+ 
+ ###### EIA Data
+ #Calculating the latest energy consumption for all countries from EIA Data
+ 
+ country_names <- subset(eia_electricity,eia_electricity$units != 'Billion Kwh')
+ country_names <- subset(country_names,country_names$Country.Name!= 'Tide, Wave, Fuel Cell') %>% select(Country.Name)
+
+ consumption_eia <- cbind(country_names,subset(eia_electricity,eia_electricity$Country.Name == 'Consumption'))
+ names(consumption_eia)[2] <- 'Var'
+ generation_eia <- cbind(country_names,subset(eia_electricity,eia_electricity$Country.Name == 'Generation')) %>% gather(key='year',value='value',X1980:X2014)
+ names(generation_eia)[2] <- 'Var'
+ nuclear_eia <- cbind(country_names,subset(eia_electricity,eia_electricity$Country.Name == 'Nuclear'))
+ names(nuclear_eia)[2] <- 'Var'
+ renewables_eia <- cbind(country_names,subset(eia_electricity,eia_electricity$Country.Name == 'Renewables'))
+ names(renewables_eia)[2] <- 'Var'
+ hydro_eia <- cbind(country_names,subset(eia_electricity,eia_electricity$Country.Name == 'Hydroelectricity'))
+ names(hydro_eia)[2] <- 'Var'
+ non_hydro_eia <- cbind(country_names,subset(eia_electricity,eia_electricity$Country.Name == 'Non-Hydroelectric Renewables')) %>% gather(key='year',value='value',X1980:X2014)
+ names(non_hydro_eia)[2] <- 'Var'
+ geothermal_eia <- cbind(country_names,subset(eia_electricity,eia_electricity$Country.Name == 'Geothermal'))
+ names(geothermal_eia)[2] <- 'Var'
+ wind_eia <- cbind(country_names,subset(eia_electricity,eia_electricity$Country.Name == 'Wind'))
+ names(wind_eia)[2] <- 'Var'
+ solar_tide_wave_fuel_eia <- cbind(country_names,subset(eia_electricity,eia_electricity$Country.Name == 'Solar, Tide, Wave, Fuel Cell'))
+ names(solar_tide_wave_fuel_eia)[2] <- 'Var'
+ tide_wave_fuel_eia <- cbind(country_names,subset(eia_electricity,eia_electricity$Country.Name == 'Tide, Wave, Fuel Cell'))
+ names(tide_wave_fuel_eia)[2] <- 'Var'
+ tide_wave_eia <- cbind(country_names,subset(eia_electricity,eia_electricity$Country.Name == 'Tide and Wave'))
+ names(tide_wave_eia)[2] <- 'Var'
+ solar_eia <- cbind(country_names,subset(eia_electricity,eia_electricity$Country.Name == 'Solar'))
+ names(solar_eia)[2] <- 'Var'
+ biomass_eia <- cbind(country_names,subset(eia_electricity,eia_electricity$Country.Name == 'Biomass and Waste'))
+ names(biomass_eia)[2] <- 'Var'
+ fossil_eia <- cbind(country_names,subset(eia_electricity,eia_electricity$Country.Name == 'Fossil Fuels'))
+ names(fossil_eia)[2] <- 'Var'
+ hydro_pumped_eia <- cbind(country_names,subset(eia_electricity,eia_electricity$Country.Name == 'Hydroelectric Pumped Storage')) 
+ names(hydro_pumped_eia)[2] <- 'Var'
+ 
+ # Calculating the last value for non-hyrorenewables as percentage generation
+ 
+ gen_ren_eia <- merge(generation_eia,non_hydro_eia,by=c("Country.Name","year"))
+ 
+ gen_ren_eia <- gen_ren_eia[order(gen_ren_eia$Country.Name,gen_ren_eia$year),]
+ gen_ren_eia$value.x <- as.numeric(gen_ren_eia$value.x)
+ gen_ren_eia$value.y <- as.numeric(gen_ren_eia$value.y)
+ gen_ren_eia$Country.Name <- as.character(gen_ren_eia$Country.Name)
+ gen_ren_eia$tot_ren <- gen_ren_eia$value.y/gen_ren_eia$value.x
+ gen_ren_eia$tot_ren_pct <- (gen_ren_eia$value.y/gen_ren_eia$value.x)*100
+ gen_ren_eia <- gen_ren_eia[c('Country.Name','year','tot_ren','tot_ren_pct')]
+ 
+ country_diff <- c()
+ country_name <- c()
+ for(i in 1:length(unique(gen_ren_eia$Country.Name))){
+     country <- subset(gen_ren_eia,gen_ren_eia$Country.Name==unique(gen_ren_eia$Country.Name)[i])
+     country <-  country[complete.cases(country$tot_ren_pct),]
+     if(dim(country)[1]>0){
+     country_diff[i] <- tail(country$tot_ren_pct,1) - head(country$tot_ren_pct,1)
+     country_name[i] <- unique(country$Country.Name)
+     } else{}
+ }
+ 
+eia_diff <- na.omit(data.frame(country_name,country_diff))
+eia_diff$country_diff <- as.integer(eia_diff$country_diff)
+ 
+#Before the merge remove the countries that have 0 progress in the last 20 some years
+eia_diff <- subset(eia_diff,eia_diff$country_diff!=0)
+names(eia_diff)[1] <- 'Country.Name'
+ 
+##### Quality of Governance Analysis
+
+names(quality_governance_II)[2] <- 'Country.Name'
+
+oso <- merge(eia_diff,quality_governance_II,by='Country.Name')
+ 
+ 
+ 
+ 
+length(unique(eia_diff$Country.Name))
+length(unique(eia_diff$Country.Name))
+
+
+
+
+
+
+
+
+
+
+
+#############################################################
 
 #### Read Data
 
