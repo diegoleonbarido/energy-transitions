@@ -20,15 +20,108 @@ library(ggplot2)
 library()
 setwd('/Users/diego/Desktop/Data/energy_transitions')
 
- world_bank <- read.csv('world_bank_data.csv')
- climatescope_invesments <- read.csv('country_investments_years.csv')
- fossil_subsidies <- read.csv('fossil_subsidies.csv')
- quality_governance <- read.csv('qog_bas_ts_jan17.csv')
- quality_governance_II <- read.csv('qog_bas_cs_jan17.csv')
- quality_governanceIII <- read.csv('qog_std_cs_jan17.csv')
- quality_governanceIV <- read.csv('qog_std_ts_jan17.csv')
 
+#Functions
+
+
+missing_countries <- function(datadf1,datadf2){
+  countries <- subset(datadf1$Country.Name,!(datadf1$Country.Name %in% unique(datadf2$Country.Name)))
+  missing_countries <- length(unique(datadf1$Country.Name)) - length(unique(datadf2$Country.Name))
+  return(list(countries,missing_countries))
+}
+
+######
+###### Data
+
+ #World Bank
+ world_bank <- read.csv('world_bank_data.csv') %>% gather(key='year',value='value',X1960..YR1960.:X2016..YR2016.)
+     world_bank$value <- as.numeric(world_bank$value)
+     world_bank$Country.Name <- as.character(world_bank$Country.Name)
+     world_bank$Series.Name <- as.character(world_bank$Series.Name)
+     world_bank <- subset(world_bank,world_bank$Country.Name != "Not classified" )
+     
+     for(i in 1:7){
+     coso <- subset(world_bank,world_bank$Series.Name == unique(world_bank$Series.Name)[i])
+     country_value <- c()
+     country_name <-c()
+     
+       for(j in 1:length(unique(coso$Country.Name))){
+         if(dim(na.omit(subset(coso,coso$Country.Name==unique(coso$Country.Name)[j])))[1]!=0){
+           country_value[j] <- tail(na.omit(subset(coso,coso$Country.Name==unique(coso$Country.Name)[j])),1)$value
+           country_name[j] <-  tail(na.omit(subset(coso,coso$Country.Name==unique(coso$Country.Name)[j])),1)$Country.Name
+         } else{}
+        }
+     
+       if(i==1){
+         wb_pop <- do.call(rbind,Map(data.frame,Country.Name=country_name,population=country_value))
+       } else if(i==2){
+         wb_land <- na.omit(do.call(rbind,Map(data.frame,Country.Name=country_name,land_area=country_value)))  
+       } else if(i==3) {
+         wb_pump <- na.omit(do.call(rbind,Map(data.frame,Country.Name=country_name,pump_price=country_value)))
+       } else if(i==4){
+         wb_eimp <- do.call(rbind,Map(data.frame,Country.Name=country_name,energy_imports=country_value))
+       } else if(i==5){
+         wb_rents <- na.omit(do.call(rbind,Map(data.frame,Country.Name=country_name,rents=country_value)))
+       } else if(i==6) {
+         wb_orents <- na.omit(do.call(rbind,Map(data.frame,Country.Name=country_name,oil_rents=country_value)))
+       } else if(i==7){
+         wb_fexp <- na.omit(do.call(rbind,Map(data.frame,Country.Name=country_name,fuel_exports=country_value)))
+       }
+     }
+     
+     wb_frame <- merge(wb_pop,wb_land,by='Country.Name',all=TRUE)
+     wb_frame <- merge(wb_frame,wb_pump,by='Country.Name',all=TRUE)
+     wb_frame <- merge(wb_frame,wb_eimp,by='Country.Name',all=TRUE)
+     wb_frame <- merge(wb_frame,wb_rents,by='Country.Name',all=TRUE)
+     wb_frame <- merge(wb_frame,wb_orents,by='Country.Name',all=TRUE)
+     wb_frame <- merge(wb_frame,wb_fexp,by='Country.Name',all=TRUE)
+     
+     wb_frame$Country.Name <- gsub('Brunei Darussalam','Brunei',wb_frame$Country.Name,fixed=TRUE)
+     wb_frame$Country.Name <- gsub("Cote d'Ivoire",'Cote dIvoire (IvoryCoast)',wb_frame$Country.Name,fixed=TRUE)
+     wb_frame$Country.Name <- gsub("Egypt, Arab Rep.",'Egypt',wb_frame$Country.Name,fixed=TRUE)
+     wb_frame$Country.Name <- gsub("Hong Kong SAR, China",'Hong Kong',wb_frame$Country.Name,fixed=TRUE)
+     wb_frame$Country.Name <- gsub("Iran, Islamic Rep.",'Iran',wb_frame$Country.Name,fixed=TRUE)
+     wb_frame$Country.Name <- gsub("Korea, Rep.",'Korea, South',wb_frame$Country.Name,fixed=TRUE)
+     wb_frame$Country.Name <- gsub("Russian Federation",'Russia',wb_frame$Country.Name,fixed=TRUE)
+     wb_frame$Country.Name <- gsub("Slovak Republic",'Slovakia',wb_frame$Country.Name,fixed=TRUE)
+
+     
+ #Climatescope
+ climatescope_invesments <- read.csv('country_investments_years.csv')
+ 
+ #Fossil Fuels
+ fossil_subsidies <- read.csv('fossil_subsidies.csv')
+
+    fossil_subsidies$Country.Name <- gsub("Côte d'Ivoire",'Cote dIvoire (IvoryCoast)',fossil_subsidies$Country.Name,fixed=TRUE)
+    fossil_subsidies$Country.Name <- gsub("Hong Kong SAR",'Hong Kong',fossil_subsidies$Country.Name,fixed=TRUE)
+    fossil_subsidies$Country.Name <- gsub("Korea, South",'Korea',fossil_subsidies$Country.Name,fixed=TRUE)
+    fossil_subsidies$Country.Name <- gsub("Slovak Republic",'Slovakia',fossil_subsidies$Country.Name,fixed=TRUE)
+    
+ 
+ 
+ #Governance
+ quality_governance <- read.csv('qog_bas_ts_jan17.csv') %>% select(cname,year,wdi_energyimp)
+ quality_governance_II <- read.csv('qog_bas_cs_jan17.csv') 
+ quality_governanceIII <- read.csv('qog_std_cs_jan17.csv') %>% mutate(Country.Name=cname) %>% select(Country.Name,wef_qoi,wef_elec,icrg_qog)
+          quality_governanceIII$Country.Name <- gsub('Cyprus (1975-)','Cyprus',quality_governanceIII$Country.Name,fixed=TRUE)
+          quality_governanceIII$Country.Name <- gsub('Ethiopia (1993-)','Ethiopia',quality_governanceIII$Country.Name,fixed=TRUE)
+          quality_governanceIII$Country.Name <- gsub('France (1963-)','France',quality_governanceIII$Country.Name,fixed=TRUE)
+ 
+ quality_governanceIV <- read.csv('qog_std_ts_jan17.csv')  %>% mutate(Country.Name=cname) %>% select(Country.Name,year,wdi_eneimp)
+         quality_governanceIV$Country.Name <- gsub('Cyprus (1975-)','Cyprus',quality_governanceIV$Country.Name,fixed=TRUE)
+         quality_governanceIV$Country.Name <- gsub('Ethiopia (1993-)','Ethiopia',quality_governanceIV$Country.Name,fixed=TRUE)
+         quality_governanceIV$Country.Name <- gsub('France (1963-)','France',quality_governanceIV$Country.Name,fixed=TRUE)
+ 
  policies <- read.csv('renewable_policies_iea.csv')
+         policies$Country.Name <- gsub('Korea','Korea, South',policies$Country.Name,fixed=TRUE)
+         #Cleaning for Merge
+         unique_policies_countries_df <- as.data.frame(unique(policies$Country.Name))
+         names(unique_policies_countries_df)[1] <- 'Country.Name'
+         unique_policies_countries_df$policy <- 1
+         policies <- merge(policies,unique_policies_countries_df,by='Country.Name')
+         policies_agg <- aggregate(policies$policy,by=list(policies$Country.Name),FUN=sum) %>% mutate(Country.Name=Group.1,policy_num=x) %>% select(Country.Name,policy_num)
+         
+ 
  eia_electricity <- read.csv('eia_electricity.csv')
  
  ###### EIA Data
@@ -93,28 +186,54 @@ setwd('/Users/diego/Desktop/Data/energy_transitions')
  
 eia_diff <- na.omit(data.frame(country_name,country_diff))
 eia_diff$country_diff <- as.integer(eia_diff$country_diff)
- 
-#Before the merge remove the countries that have 0 progress in the last 20 some years
-eia_diff <- subset(eia_diff,eia_diff$country_diff!=0)
 names(eia_diff)[1] <- 'Country.Name'
- 
-##### Quality of Governance Analysis
+#eia_diff <- subset(eia_diff,eia_diff$country_diff!=0) %>% mutate(Country.Name=country_name) %>% select(Country.Name,country_diff)
 
-names(quality_governance_II)[2] <- 'Country.Name'
-
-oso <- merge(eia_diff,quality_governance_II,by='Country.Name')
- 
- 
- 
- 
-length(unique(eia_diff$Country.Name))
-length(unique(eia_diff$Country.Name))
+#eia_diff <- subset(eia_diff,eia_diff$country_diff!=0) %>% mutate(Country.Name=country_name) %>% select(Country.Name,country_diff)
 
 
 
 
+#########
+#########
+##### PLots
+
+#Policy
+eia_diff_merge <- merge(eia_diff,quality_governanceIII,by='Country.Name')
+eia_diff_merge <- merge(eia_diff_merge,quality_governanceIII, by='Country.Name')
+eia_diff_merge_policy <- merge(eia_diff_merge,policies_agg)
+
+missing_countries(eia_diff_merge,eia_diff_merge_policy)[[1]]
+missing_countries(eia_diff_merge,eia_diff_merge_policy)[[2]]
+
+eia_diff_merge_policy$Country.Name <- as.character(eia_diff_merge_policy$Country.Name)
+
+ggplot(eia_diff_merge_policy,aes(policy_num,country_diff)) + geom_point(aes(size = icrg_qog.x,colour=wef_qoi.x),alpha=0.6) + geom_text(aes(label=Country.Name),hjust=0, vjust=-1,size = 2) + ylim(-10,60) + theme_bw() + theme(axis.line = element_line(colour = "grey"), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.border = element_blank(), panel.background = element_blank()) + theme(legend.position="bottom") + xlab("Number of Pro-Renewable Energy Polices since 1974") + ylab("Percentage Point Change 1980-2014, Non-Hydro Renewable Energy Generation") + labs(size="Quality of Governance", colour="Quality of Infrastructure")
 
 
+#Fuel Exports and Pump Prices Plots
+
+eia_fuel_merge <- merge(eia_diff,wb_frame,by="Country.Name")
+
+missing_countries(eia_diff,eia_fuel_merge)[[1]]
+missing_countries(eia_diff,eia_fuel_merge)[[2]]
+eia_fuel_merge$Country.Name <- as.character(eia_fuel_merge$Country.Name)
+
+ggplot(eia_fuel_merge,aes(pump_price,country_diff)) + geom_point(aes(size = fuel_exports,colour=energy_imports),alpha=0.6) + scale_colour_gradient(low = "red", high = "light blue") + geom_text(aes(label=Country.Name),hjust=0, vjust=-1,size = 2) +xlim(0,2.5) + ylim(-20,60)+ theme_bw() +theme(axis.line = element_line(colour = "grey"), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.border = element_blank(), panel.background = element_blank()) + theme(legend.position="bottom") + xlab("Pump Price ($US/liter)") + ylab("Percentage Point Change 1980-2014, Non-Hydro Renewable Energy Generation") + labs(size="Fuel exports (% of merchandise exports)", colour="Energy imports, net (% of energy use)")
+
+
+# Resource Rents
+
+eia_wb_imf <- merge(eia_fuel_merge,fossil_subsidies)
+
+missing_countries(eia_fuel_merge,eia_wb_imf)[[1]]
+missing_countries(eia_fuel_merge,eia_wb_imf)[[2]]
+eia_wb_imf$Country.Name <- as.character(eia_wb_imf$Country.Name)
+
+ggplot(eia_wb_imf,aes(rents,country_diff)) + geom_point(aes(size = Total_GDP,colour=log(Total_Billions)),alpha=0.4) + scale_colour_gradient(low = "light green", high = "dark blue") + geom_text(aes(label=Country.Name),hjust=0, vjust=-1,size = 2) + ylim(-20,60) + theme_bw() +theme(axis.line = element_line(colour = "grey"), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.border = element_blank(), panel.background = element_blank()) + theme(legend.position="bottom") + xlab("Total Natural Resource Rents (% of GDP)") + ylab("Percentage Point Change 1980-2014, Non-Hydro Renewable Energy Generation") + labs(size="Fossil Fuel Subsidies (% of GDP)", colour="ln(Fossil Fuel Subsidies Billions)")
+
+
+# Climatescope and Other Resources
 
 
 
