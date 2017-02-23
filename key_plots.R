@@ -184,9 +184,9 @@ eia_electricity <- read.csv('eia_electricity.csv')
  names(hydro_eia)[2] <- 'Var'
  non_hydro_eia <- cbind(country_names,subset(eia_electricity,eia_electricity$Country.Name == 'Non-Hydroelectric Renewables')) %>% gather(key='year',value='value',X1980:X2014)
  names(non_hydro_eia)[2] <- 'Var'
- geothermal_eia <- cbind(country_names,subset(eia_electricity,eia_electricity$Country.Name == 'Geothermal'))
+ geothermal_eia <- cbind(country_names,subset(eia_electricity,eia_electricity$Country.Name == 'Geothermal')) %>% gather(key='year',value='value_geo',X1980:X2014)
  names(geothermal_eia)[2] <- 'Var'
- wind_eia <- cbind(country_names,subset(eia_electricity,eia_electricity$Country.Name == 'Wind'))
+ wind_eia <- cbind(country_names,subset(eia_electricity,eia_electricity$Country.Name == 'Wind')) %>% gather(key='year',value='value_wind',X1980:X2014)
  names(wind_eia)[2] <- 'Var'
  solar_tide_wave_fuel_eia <- cbind(country_names,subset(eia_electricity,eia_electricity$Country.Name == 'Solar, Tide, Wave, Fuel Cell'))
  names(solar_tide_wave_fuel_eia)[2] <- 'Var'
@@ -194,9 +194,9 @@ eia_electricity <- read.csv('eia_electricity.csv')
  names(tide_wave_fuel_eia)[2] <- 'Var'
  tide_wave_eia <- cbind(country_names,subset(eia_electricity,eia_electricity$Country.Name == 'Tide and Wave'))
  names(tide_wave_eia)[2] <- 'Var'
- solar_eia <- cbind(country_names,subset(eia_electricity,eia_electricity$Country.Name == 'Solar'))
+ solar_eia <- cbind(country_names,subset(eia_electricity,eia_electricity$Country.Name == 'Solar')) %>% gather(key='year',value='value_solar',X1980:X2014)
  names(solar_eia)[2] <- 'Var'
- biomass_eia <- cbind(country_names,subset(eia_electricity,eia_electricity$Country.Name == 'Biomass and Waste'))
+ biomass_eia <- cbind(country_names,subset(eia_electricity,eia_electricity$Country.Name == 'Biomass and Waste')) %>% gather(key='year',value='value_bio',X1980:X2014)
  names(biomass_eia)[2] <- 'Var'
  fossil_eia <- cbind(country_names,subset(eia_electricity,eia_electricity$Country.Name == 'Fossil Fuels'))
  names(fossil_eia)[2] <- 'Var'
@@ -252,7 +252,8 @@ missing_countries(eia_diff_merge,eia_diff_merge_policy)[[2]]
 
 eia_diff_merge_policy$Country.Name <- as.character(eia_diff_merge_policy$Country.Name)
 
-ggplot(eia_diff_merge_policy,aes(policy_num,country_diff)) + geom_point(aes(size = icrg_qog.x,colour=wef_qoi.x),alpha=0.6) + geom_text(aes(label=Country.Name),hjust=0, vjust=-1,size = 2) + ylim(-10,60) + theme_bw() + theme(axis.line = element_line(colour = "grey"), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.border = element_blank(), panel.background = element_blank()) + theme(legend.position="bottom") + xlab("Number of Pro-Renewable Energy Polices since 1974") + ylab("Percentage Point Change 1980-2014, Non-Hydro Renewable Energy Generation") + labs(size="Quality of Governance", colour="Quality of Infrastructure")
+#ggplot(eia_diff_merge_policy,aes(policy_num,country_diff)) + geom_point(aes(size = icrg_qog.x,colour=wef_qoi.x),alpha=0.6) + geom_text(aes(label=Country.Name),hjust=0, vjust=-1,size = 2) + ylim(-10,60) + theme_bw() + theme(axis.line = element_line(colour = "grey"), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.border = element_blank(), panel.background = element_blank()) + theme(legend.position="bottom") + xlab("Number of Pro-Renewable Energy Polices since 1974") + ylab("Percentage Point Change 1980-2014, Non-Hydro Renewable Energy Generation") + labs(size="Quality of Governance", colour="Quality of Infrastructure")
+ggplot(subset(eia_diff_merge_policy,eia_diff_merge_policy$country_diff!=0),aes(policy_num,country_diff)) + geom_point(aes(size = icrg_qog.x,colour=wef_qoi.x),alpha=0.6) + geom_text(aes(label=Country.Name),hjust=0, vjust=-1,size = 2) + ylim(-10,60) + theme_bw() + theme(axis.line = element_line(colour = "grey"), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.border = element_blank(), panel.background = element_blank()) + theme(legend.position="bottom") + xlab("Number of Pro-Renewable Energy Polices since 1974") + ylab("Percentage Point Change 1980-2014, Non-Hydro Renewable Energy Generation") + labs(size="Quality of Governance", colour="Quality of Infrastructure")
 
 
 #Fuel Exports and Pump Prices Plots
@@ -274,6 +275,7 @@ missing_countries(eia_fuel_merge,eia_wb_imf)[[2]]
 eia_wb_imf$Country.Name <- as.character(eia_wb_imf$Country.Name)
 
 ggplot(eia_wb_imf,aes(rents,country_diff)) + geom_point(aes(size = Total_GDP,colour=log(Total_Billions)),alpha=0.4) + scale_colour_gradient(low = "light green", high = "dark blue") + geom_text(aes(label=Country.Name),hjust=0, vjust=-1,size = 2) + ylim(-20,60) + theme_bw() +theme(axis.line = element_line(colour = "grey"), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.border = element_blank(), panel.background = element_blank()) + theme(legend.position="bottom") + xlab("Total Natural Resource Rents (% of GDP)") + ylab("Percentage Point Change 1980-2014, Non-Hydro Renewable Energy Generation") + labs(size="Fossil Fuel Subsidies (% of GDP)", colour="ln(Fossil Fuel Subsidies Billions)")
+#ggplot(eia_wb_imf,aes(rents,country_diff)) + geom_point(aes(size = Total_GDP,colour=log(Total_Billions)),alpha=0.4) + scale_colour_gradient(low = "light green", high = "dark blue") + geom_text(subset(eia_wb_imf,eia_wb_imf$country_diff!=0),aes(label=Country.Name),hjust=0, vjust=-1,size = 2) + ylim(-20,60) + theme_bw() +theme(axis.line = element_line(colour = "grey"), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.border = element_blank(), panel.background = element_blank()) + theme(legend.position="bottom") + xlab("Total Natural Resource Rents (% of GDP)") + ylab("Percentage Point Change 1980-2014, Non-Hydro Renewable Energy Generation") + labs(size="Fossil Fuel Subsidies (% of GDP)", colour="ln(Fossil Fuel Subsidies Billions)")
 
 
 # Climatescope and Other Resources
@@ -364,7 +366,7 @@ kenya_energy <- tail(subset(world_bank,world_bank$Country.Name=='Kenya' & world_
 
 pepe <- wb_e_gdp[order(wb_e_gdp$e_use_gdp),]
 
-#How transitions look like over time
+### How transitions look like over time
 
 countries <- subset(non_hydro_eia,non_hydro_eia$Country.Name=='Germany' | non_hydro_eia$Country.Name=='Spain' | non_hydro_eia$Country.Name=='Denmark' | non_hydro_eia$Country.Name=='Germany' | non_hydro_eia$Country.Name=='Costa Rica' | non_hydro_eia$Country.Name=='Kenya' | non_hydro_eia$Country.Name=='Nicaragua')
 countries$year <- as.numeric(gsub('X','',countries$year))
@@ -380,4 +382,46 @@ gen_pct$pct <- as.numeric(gen_pct$value.y)/as.numeric(gen_pct$value.x)
 ggplot(gen_pct,aes(year,pct,group=Country.Name)) + geom_line(aes(colour=factor(Country.Name)))
 
 costa <- subset(gen_pct,gen_pct$Country.Name=='Costa Rica')
+
+
+#### Data for Concentric Circles
+
+percents_by_resource <- merge(generation_eia,biomass_eia,by=c('Country.Name','year'))
+percents_by_resource <- merge(percents_by_resource,solar_eia,by=c('Country.Name','year'))
+percents_by_resource <- merge(percents_by_resource,wind_eia,by=c('Country.Name','year'))
+percents_by_resource <- merge(percents_by_resource,geothermal_eia,by=c('Country.Name','year'))
+
+percents_by_resource$pct_bio <- (as.numeric(percents_by_resource$value_bio)/as.numeric(percents_by_resource$value))*100
+percents_by_resource$pct_solar <- (as.numeric(percents_by_resource$value_solar)/as.numeric(percents_by_resource$value))*100
+percents_by_resource$pct_wind <- (as.numeric(percents_by_resource$value_wind)/as.numeric(percents_by_resource$value))*100
+percents_by_resource$pct_geo <- (as.numeric(percents_by_resource$value_geo)/as.numeric(percents_by_resource$value))*100
+
+percents_by_resource$year <-  as.numeric(gsub("X","",percents_by_resource$year))
+
+df_resource <- percents_by_resource
+#Plot all countries one by one
+plot_list = list()
+plot.names = list()
+#pct_bio,pct_solar
+con_i_sub <- df_resource[complete.cases(df_resource$pct_geo),]
+for (i in 1:length(unique(con_i_sub$Country.Name))) {
+  con_i <- subset(con_i_sub,con_i_sub$Country.Name==unique(con_i_sub$Country.Name)[i])
+  plot_list[[i]] <- ggplot(con_i, aes(x=year, y=pct_geo),na.omit=TRUE) + geom_line() + geom_text(aes(label=year))
+  plot.names[[i]] <- unique(con_i$Country.Name)
+}
+
+options(warn=1)
+# Save plots to jpeg making a separate file for each plot.
+for (i in 1:length(unique(con_i_sub$Country.Name))) {
+  mypath <- file.path("/Users/diego/Desktop/Projects/energy_transitons/plots/geo",paste(plot.names[[i]],".jpg",sep = ""))
+  jpeg(file=mypath)
+  print(plot_list[[i]]) 
+  dev.off()
+}
+options(warn=0)
+
+
+
+
+
 
