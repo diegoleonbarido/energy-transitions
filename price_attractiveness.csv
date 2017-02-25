@@ -1,0 +1,291 @@
+,amount_dol_mwh,country_name,price_type,year
+0,0.0,argentina,Spot,2015
+1,45.58,argentina,Retail Avg,2015
+2,39.12,argentina,Residential,2015
+3,56.44,argentina,Commercial,2015
+4,41.18,argentina,Industrial,2015
+5,0.0,bahamas,Spot,2015
+6,266.7598806173,bahamas,Retail Avg,2015
+7,248.1927305253,bahamas,Residential,2015
+8,283.345324443,bahamas,Commercial,2015
+9,268.7415868836,bahamas,Industrial,2015
+10,0.0,bangladesh,Spot,2015
+11,100.0,bangladesh,Retail Avg,2015
+12,79.0,bangladesh,Residential,2015
+13,124.0,bangladesh,Commercial,2015
+14,98.0,bangladesh,Industrial,2015
+15,0.0,barbados,Spot,2015
+16,267.8039814754,barbados,Retail Avg,2015
+17,248.8539035938,barbados,Residential,2015
+18,292.3289035938,barbados,Commercial,2015
+19,262.2291372386,barbados,Industrial,2015
+20,0.0,belize,Spot,2015
+21,175.3815833333,belize,Retail Avg,2015
+22,192.4615,belize,Residential,2015
+23,194.961,belize,Commercial,2015
+24,138.72225,belize,Industrial,2015
+25,16.3908333333,bolivia,Spot,2015
+26,105.74,bolivia,Retail Avg,2015
+27,96.32,bolivia,Residential,2015
+28,146.89,bolivia,Commercial,2015
+29,74.01,bolivia,Industrial,2015
+30,0.0,botswana,Spot,2015
+31,79.4044622222,botswana,Retail Avg,2015
+32,75.74502,botswana,Residential,2015
+33,80.8546266667,botswana,Commercial,2015
+34,81.61374,botswana,Industrial,2015
+35,85.7575757576,brazil,Spot,2015
+36,122.4281562144,brazil,Retail Avg,2015
+37,129.4688493918,brazil,Residential,2015
+38,125.7002266432,brazil,Commercial,2015
+39,112.115392608,brazil,Industrial,2015
+40,0.0,cameroon,Spot,2015
+41,135.05,cameroon,Retail Avg,2015
+42,135.47,cameroon,Residential,2015
+43,143.47,cameroon,Commercial,2015
+44,126.22,cameroon,Industrial,2015
+45,72.89,chile,Spot,2015
+46,139.31,chile,Retail Avg,2015
+47,190.26,chile,Residential,2015
+48,114.98,chile,Commercial,2015
+49,112.69,chile,Industrial,2015
+50,60.0,china,Spot,2015
+51,99.0,china,Retail Avg,2015
+52,88.0,china,Residential,2015
+53,122.0,china,Commercial,2015
+54,101.0,china,Industrial,2015
+55,83.11,colombia,Spot,2015
+56,119.9149757411,colombia,Retail Avg,2015
+57,139.9107028325,colombia,Residential,2015
+58,128.8978247718,colombia,Commercial,2015
+59,90.9363996191,colombia,Industrial,2015
+60,0.0,costa-rica,Spot,2015
+61,160.4928,costa-rica,Retail Avg,2015
+62,157.9968,costa-rica,Residential,2015
+63,181.0224,costa-rica,Commercial,2015
+64,142.4592,costa-rica,Industrial,2015
+65,0.0,cote-ivoire,Spot,2015
+66,139.64,cote-ivoire,Retail Avg,2015
+67,140.06,cote-ivoire,Residential,2015
+68,151.45,cote-ivoire,Commercial,2015
+69,127.99,cote-ivoire,Industrial,2015
+70,0.0,dr-congo,Spot,2015
+71,72.8,dr-congo,Retail Avg,2015
+72,51.5,dr-congo,Residential,2015
+73,110.0,dr-congo,Commercial,2015
+74,56.9,dr-congo,Industrial,2015
+75,95.62,dominican-republic,Spot,2015
+76,148.6873333333,dominican-republic,Retail Avg,2015
+77,118.689,dominican-republic,Residential,2015
+78,171.575,dominican-republic,Commercial,2015
+79,155.798,dominican-republic,Industrial,2015
+80,64.0,ecuador,Spot,2015
+81,92.6333333333,ecuador,Retail Avg,2015
+82,103.0,ecuador,Residential,2015
+83,96.4,ecuador,Commercial,2015
+84,78.5,ecuador,Industrial,2015
+85,0.0,egypt,Spot,2015
+86,49.3,egypt,Retail Avg,2015
+87,22.08,egypt,Residential,2015
+88,68.56,egypt,Commercial,2015
+89,57.25,egypt,Industrial,2015
+90,120.49,el-salvador,Spot,2015
+91,154.1866666667,el-salvador,Retail Avg,2015
+92,143.16,el-salvador,Residential,2015
+93,166.8,el-salvador,Commercial,2015
+94,152.6,el-salvador,Industrial,2015
+95,0.0,ethiopia,Spot,2015
+96,60.0,ethiopia,Retail Avg,2015
+97,51.0,ethiopia,Residential,2015
+98,87.0,ethiopia,Commercial,2015
+99,44.0,ethiopia,Industrial,2015
+100,0.0,ghana,Spot,2015
+101,235.9,ghana,Retail Avg,2015
+102,252.4,ghana,Residential,2015
+103,266.1,ghana,Commercial,2015
+104,189.2,ghana,Industrial,2015
+105,71.06,guatemala,Spot,2015
+106,181.35,guatemala,Retail Avg,2015
+107,234.66,guatemala,Residential,2015
+108,157.13,guatemala,Commercial,2015
+109,152.27,guatemala,Industrial,2015
+110,0.0,guyana,Spot,2015
+111,309.0,guyana,Retail Avg,2015
+112,258.0,guyana,Residential,2015
+113,358.0,guyana,Commercial,2015
+114,311.0,guyana,Industrial,2015
+115,0.0,haiti,Spot,2015
+116,287.848,haiti,Retail Avg,2015
+117,194.04,haiti,Residential,2015
+118,326.898,haiti,Commercial,2015
+119,342.606,haiti,Industrial,2015
+120,0.0,honduras,Spot,2015
+121,159.144,honduras,Retail Avg,2015
+122,139.536,honduras,Residential,2015
+123,181.488,honduras,Commercial,2015
+124,156.408,honduras,Industrial,2015
+125,53.0,india,Spot,2015
+126,95.97,india,Retail Avg,2015
+127,75.09,india,Residential,2015
+128,114.53,india,Commercial,2015
+129,98.27,india,Industrial,2015
+130,0.0,indonesia,Spot,2015
+131,77.15,indonesia,Retail Avg,2015
+132,57.74,indonesia,Residential,2015
+133,115.61,indonesia,Commercial,2015
+134,89.2,indonesia,Industrial,2015
+135,0.0,jamaica,Spot,2015
+136,242.0,jamaica,Retail Avg,2015
+137,277.0,jamaica,Residential,2015
+138,247.7784284536,jamaica,Commercial,2015
+139,196.0,jamaica,Industrial,2015
+140,0.0,jordan,Spot,2015
+141,138.0,jordan,Retail Avg,2015
+142,90.0,jordan,Residential,2015
+143,219.0,jordan,Commercial,2015
+144,107.0,jordan,Industrial,2015
+145,0.0,kenya,Spot,2015
+146,162.84,kenya,Retail Avg,2015
+147,209.21075,kenya,Residential,2015
+148,145.3395526,kenya,Commercial,2015
+149,133.964708,kenya,Industrial,2015
+150,0.0,lebanon,Spot,2015
+151,96.2,lebanon,Retail Avg,2015
+152,60.3,lebanon,Residential,2015
+153,85.0,lebanon,Commercial,2015
+154,143.5,lebanon,Industrial,2015
+155,0.0,liberia,Spot,2015
+156,520.0,liberia,Retail Avg,2015
+157,0.0,liberia,Residential,2015
+158,0.0,liberia,Commercial,2015
+159,0.0,liberia,Industrial,2015
+160,0.0,malawi,Spot,2015
+161,90.0,malawi,Retail Avg,2015
+162,73.0,malawi,Residential,2015
+163,97.0,malawi,Commercial,2015
+164,384.0,malawi,Industrial,2015
+165,0.0,mexico,Spot,2015
+166,110.4514837469,mexico,Retail Avg,2015
+167,75.67451234,mexico,Residential,2015
+168,177.1891587417,mexico,Commercial,2015
+169,78.4907801592,mexico,Industrial,2015
+170,0.0,mozambique,Spot,2015
+171,107.4,mozambique,Retail Avg,2015
+172,113.0,mozambique,Residential,2015
+173,179.5,mozambique,Commercial,2015
+174,65.1,mozambique,Industrial,2015
+175,0.0,myanmar,Spot,2015
+176,51.5,myanmar,Retail Avg,2015
+177,30.9,myanmar,Residential,2015
+178,61.7,myanmar,Commercial,2015
+179,61.7,myanmar,Industrial,2015
+180,0.0,nepal,Spot,2015
+181,93.0,nepal,Retail Avg,2015
+182,80.0,nepal,Residential,2015
+183,114.0,nepal,Commercial,2015
+184,85.0,nepal,Industrial,2015
+185,87.39,nicaragua,Spot,2015
+186,210.890864,nicaragua,Retail Avg,2015
+187,195.981712,nicaragua,Residential,2015
+188,247.249264,nicaragua,Commercial,2015
+189,189.441616,nicaragua,Industrial,2015
+190,0.0,nigeria,Spot,2015
+191,104.7,nigeria,Retail Avg,2015
+192,85.2,nigeria,Residential,2015
+193,112.63,nigeria,Commercial,2015
+194,119.59,nigeria,Industrial,2015
+195,0.0,pakistan,Spot,2015
+196,134.0,pakistan,Retail Avg,2015
+197,126.0,pakistan,Residential,2015
+198,147.0,pakistan,Commercial,2015
+199,138.0,pakistan,Industrial,2015
+200,213.76,panama,Spot,2015
+201,207.4,panama,Retail Avg,2015
+202,192.0,panama,Residential,2015
+203,218.8,panama,Commercial,2015
+204,211.4,panama,Industrial,2015
+205,0.0,paraguay,Spot,2015
+206,60.5,paraguay,Retail Avg,2015
+207,69.3,paraguay,Residential,2015
+208,64.0,paraguay,Commercial,2015
+209,48.2,paraguay,Industrial,2015
+210,14.7,peru,Spot,2015
+211,107.53,peru,Retail Avg,2015
+212,141.12,peru,Residential,2015
+213,102.87,peru,Commercial,2015
+214,78.6,peru,Industrial,2015
+215,0.0,rwanda,Spot,2015
+216,231.3333333333,rwanda,Retail Avg,2015
+217,258.0,rwanda,Residential,2015
+218,258.0,rwanda,Commercial,2015
+219,178.0,rwanda,Industrial,2015
+220,0.0,senegal,Spot,2015
+221,239.4179,senegal,Retail Avg,2015
+222,215.4198,senegal,Residential,2015
+223,288.4766,senegal,Commercial,2015
+224,214.3573,senegal,Industrial,2015
+225,0.0,sierra-leone,Spot,2015
+226,285.0,sierra-leone,Retail Avg,2015
+227,245.0,sierra-leone,Residential,2015
+228,325.0,sierra-leone,Commercial,2015
+229,0.0,sierra-leone,Industrial,2015
+230,0.0,south-africa,Spot,2015
+231,63.64670233,south-africa,Retail Avg,2015
+232,76.72289766,south-africa,Residential,2015
+233,69.76421445,south-africa,Commercial,2015
+234,44.45299488,south-africa,Industrial,2015
+235,0.0,sri-lanka,Spot,2015
+236,98.0,sri-lanka,Retail Avg,2015
+237,97.2,sri-lanka,Residential,2015
+238,117.8,sri-lanka,Commercial,2015
+239,78.6,sri-lanka,Industrial,2015
+240,0.0,suriname,Spot,2015
+241,42.8470336479,suriname,Retail Avg,2015
+242,35.4315522793,suriname,Residential,2015
+243,49.2336942413,suriname,Commercial,2015
+244,43.875854423,suriname,Industrial,2015
+245,0.0,tajikistan,Spot,2015
+246,41.0,tajikistan,Retail Avg,2015
+247,18.0,tajikistan,Residential,2015
+248,53.0,tajikistan,Commercial,2015
+249,53.0,tajikistan,Industrial,2015
+250,0.0,tanzania,Spot,2015
+251,158.51,tanzania,Retail Avg,2015
+252,196.81,tanzania,Residential,2015
+253,167.45,tanzania,Commercial,2015
+254,111.27,tanzania,Industrial,2015
+255,0.0,trinidad-and-tobago,Spot,2015
+256,52.2987733333,trinidad-and-tobago,Retail Avg,2015
+257,50.368,trinidad-and-tobago,Residential,2015
+258,80.6675,trinidad-and-tobago,Commercial,2015
+259,25.86082,trinidad-and-tobago,Industrial,2015
+260,0.0,uganda,Spot,2015
+261,145.6,uganda,Retail Avg,2015
+262,175.2,uganda,Residential,2015
+263,159.3,uganda,Commercial,2015
+264,102.4,uganda,Industrial,2015
+265,59.495,uruguay,Spot,2015
+266,200.9,uruguay,Retail Avg,2015
+267,218.9,uruguay,Residential,2015
+268,219.6,uruguay,Commercial,2015
+269,164.3,uruguay,Industrial,2015
+270,0.0,venezuela,Spot,2015
+271,20.21,venezuela,Retail Avg,2015
+272,19.32,venezuela,Residential,2015
+273,19.78,venezuela,Commercial,2015
+274,21.54,venezuela,Industrial,2015
+275,71.3,vietnam,Spot,2015
+276,86.0366666667,vietnam,Retail Avg,2015
+277,79.0,vietnam,Residential,2015
+278,110.61,vietnam,Commercial,2015
+279,68.5,vietnam,Industrial,2015
+280,0.0,zambia,Spot,2015
+281,43.9,zambia,Retail Avg,2015
+282,47.4,zambia,Residential,2015
+283,40.4,zambia,Commercial,2015
+284,0.0,zambia,Industrial,2015
+285,0.0,zimbabwe,Spot,2015
+286,98.3,zimbabwe,Retail Avg,2015
+287,102.65,zimbabwe,Residential,2015
+288,105.04,zimbabwe,Commercial,2015
+289,87.21,zimbabwe,Industrial,2015
