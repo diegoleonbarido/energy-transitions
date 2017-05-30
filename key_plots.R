@@ -22,19 +22,36 @@ setwd('/Users/diego/Desktop/Data/energy_transitions')
 ############
 #Functions
 
-
+# Number and Missing Countries
 missing_countries <- function(datadf1,datadf2){
   countries <- subset(datadf1$Country.Name,!(datadf1$Country.Name %in% unique(datadf2$Country.Name)))
   missing_countries <- length(unique(datadf1$Country.Name)) - length(unique(datadf2$Country.Name))
   return(list(countries,missing_countries))
 }
 
+# Capitalize 
 simpleCap <- function(x) {
   s <- strsplit(x, " ")[[1]]
   paste(toupper(substring(s, 1,1)), substring(s, 2),
         sep="", collapse=" ")
 }
 
+#Trim
+trim <- function (x) gsub("^\\s+|\\s+$", "", x)
+
+#Clean World Bank Names
+
+wb_names <- function(df_wb){
+  df_wb$Country.Name <- gsub('Brunei Darussalam','Brunei',df_wb$Country.Name,fixed=TRUE)
+  df_wb$Country.Name <- gsub("Cote d'Ivoire",'Cote dIvoire (IvoryCoast)',df_wb$Country.Name,fixed=TRUE)
+  df_wb$Country.Name <- gsub("Egypt, Arab Rep.",'Egypt',df_wb$Country.Name,fixed=TRUE)
+  df_wb$Country.Name <- gsub("Hong Kong SAR, China",'Hong Kong',df_wb$Country.Name,fixed=TRUE)
+  df_wb$Country.Name <- gsub("Iran, Islamic Rep.",'Iran',df_wb$Country.Name,fixed=TRUE)
+  df_wb$Country.Name <- gsub("Korea, Rep.",'Korea, South',df_wb$Country.Name,fixed=TRUE)
+  df_wb$Country.Name <- gsub("Russian Federation",'Russia',df_wb$Country.Name,fixed=TRUE)
+  df_wb$Country.Name <- gsub("Slovak Republic",'Slovakia',df_wb$Country.Name,fixed=TRUE)
+  return(df_wb)
+}
 
 
 
@@ -48,7 +65,7 @@ simpleCap <- function(x) {
      world_bank$Series.Name <- as.character(world_bank$Series.Name)
      world_bank <- subset(world_bank,world_bank$Country.Name != "Not classified" )
      
-     for(i in 1:10){
+     for(i in 1:17){
      coso <- subset(world_bank,world_bank$Series.Name == unique(world_bank$Series.Name)[i])
      country_value <- c()
      country_name <-c()
@@ -80,29 +97,68 @@ simpleCap <- function(x) {
          wb_e_gdp <- na.omit(do.call(rbind,Map(data.frame,Country.Name=country_name,e_use_gdp=country_value)))
        } else if(i==10){
          wb_gdp_capita <- na.omit(do.call(rbind,Map(data.frame,Country.Name=country_name,gdp_capita =country_value)))
+       } else if(i==11){
+         wb_gdp_net_aid <- na.omit(do.call(rbind,Map(data.frame,Country.Name=country_name,net_aid =country_value)))
+       } else if(i==12){
+         wb_gdp_net_aid_assist <- na.omit(do.call(rbind,Map(data.frame,Country.Name=country_name,net_assist =country_value)))
+       } else if(i==13){
+         wb_industry <- na.omit(do.call(rbind,Map(data.frame,Country.Name=country_name,industry =country_value)))
+       } else if(i==14){
+         wb_pop_dense <- na.omit(do.call(rbind,Map(data.frame,Country.Name=country_name,pop_dens =country_value)))
+       } else if(i==15){
+         wb_popII <- na.omit(do.call(rbind,Map(data.frame,Country.Name=country_name,population =country_value)))
+       } else if(i==16){
+         wb_eimpII <- na.omit(do.call(rbind,Map(data.frame,Country.Name=country_name,energy_imports =country_value)))
+       } else if(i==17){
+         wb_e_gdpII <- na.omit(do.call(rbind,Map(data.frame,Country.Name=country_name,e_use_gdp =country_value)))
        }
      }
      
-     wb_frame <- merge(wb_pop,wb_land,by='Country.Name',all=TRUE)
+     wb_frame <- merge(wb_popII,wb_land,by='Country.Name',all=TRUE)
      wb_frame <- merge(wb_frame,wb_pump,by='Country.Name',all=TRUE)
-     wb_frame <- merge(wb_frame,wb_eimp,by='Country.Name',all=TRUE)
+     wb_frame <- merge(wb_frame,wb_eimpII,by='Country.Name',all=TRUE)
      wb_frame <- merge(wb_frame,wb_rents,by='Country.Name',all=TRUE)
      wb_frame <- merge(wb_frame,wb_orents,by='Country.Name',all=TRUE)
      wb_frame <- merge(wb_frame,wb_fexp,by='Country.Name',all=TRUE)
      wb_frame <- merge(wb_frame,wb_e_intensity_primary,by='Country.Name',all=TRUE)
-     wb_frame <- merge(wb_frame,wb_e_gdp,by='Country.Name',all=TRUE)
+     wb_frame <- merge(wb_frame,wb_e_gdpII,by='Country.Name',all=TRUE)
      wb_frame <- merge(wb_frame,wb_gdp_capita,by='Country.Name',all=TRUE)
+     wb_frame <- merge(wb_frame,wb_gdp_net_aid,by='Country.Name',all=TRUE)
+     wb_frame <- merge(wb_frame,wb_gdp_net_aid_assist,by='Country.Name',all=TRUE)
+     wb_frame <- merge(wb_frame,wb_industry,by='Country.Name',all=TRUE)
+     wb_frame <- merge(wb_frame,wb_pop_dense,by='Country.Name',all=TRUE)
      
-     wb_frame$Country.Name <- gsub('Brunei Darussalam','Brunei',wb_frame$Country.Name,fixed=TRUE)
-     wb_frame$Country.Name <- gsub("Cote d'Ivoire",'Cote dIvoire (IvoryCoast)',wb_frame$Country.Name,fixed=TRUE)
-     wb_frame$Country.Name <- gsub("Egypt, Arab Rep.",'Egypt',wb_frame$Country.Name,fixed=TRUE)
-     wb_frame$Country.Name <- gsub("Hong Kong SAR, China",'Hong Kong',wb_frame$Country.Name,fixed=TRUE)
-     wb_frame$Country.Name <- gsub("Iran, Islamic Rep.",'Iran',wb_frame$Country.Name,fixed=TRUE)
-     wb_frame$Country.Name <- gsub("Korea, Rep.",'Korea, South',wb_frame$Country.Name,fixed=TRUE)
-     wb_frame$Country.Name <- gsub("Russian Federation",'Russia',wb_frame$Country.Name,fixed=TRUE)
-     wb_frame$Country.Name <- gsub("Slovak Republic",'Slovakia',wb_frame$Country.Name,fixed=TRUE)
+     wb_frame <- wb_names(wb_frame)
+     
+### Calculating Difference in Energy Intensity for GDP, Energy Use and Energy Intensity
+     #Energy use (kg of oil equivalent) per $1,000 GDP (constant 2011 PPP)
+     #Energy intensity level of primary energy (MJ/$2011 PPP GDP)
+     #GDP per capita (constant 2010 US$)
+     
+     var_to_clean <- subset(world_bank,world_bank$Series.Name=='Energy intensity level of primary energy (MJ/$2011 PPP GDP)')
+     country_var_diff <- c()
+     country_var_name <- c()
+     country_var_diff_pct <- c()
+     current_non_hydro_gen <- c()
+     for(i in 1:length(unique(var_to_clean$Country.Name))){
+       country <- subset(var_to_clean,var_to_clean$Country.Name==unique(var_to_clean$Country.Name)[i])
+       country <-  country[complete.cases(country$value),]
+       if(dim(country)[1]>0){
+         country_var_diff[i] <- tail(country$value,1) - head(country$value,1)
+         country_var_diff_pct[i] <- ((tail(country$value,1) - head(country$value,1))/head(country$value,1))*100
+         country_var_name[i] <- unique(country$Country.Name)
+       } else{}
+     }
+     
+energy_intensity_change <- data.frame(country_var_name,country_var_diff) %>% mutate(Country.Name=country_var_name,Intense_Change=country_var_diff) %>% select(Country.Name,Intense_Change)
+energy_use_change <- data.frame(country_var_name,country_var_diff,country_var_diff_pct) %>% mutate(Country.Name=country_var_name,EUSE_Change=country_var_diff,EUSE_pct_change=country_var_diff_pct) %>% select(Country.Name,EUSE_Change,EUSE_pct_change)
+    energy_use_change <- wb_names(energy_use_change)
+gdp_change <- data.frame(country_var_name,country_var_diff,country_var_diff_pct) %>% mutate(Country.Name=country_var_name,gdp_change=country_var_diff,gdp_pct_change=country_var_diff_pct) %>% select(Country.Name,gdp_change,gdp_pct_change)
+    gdp_change <- wb_names(gdp_change)
 
-     
+
+
+
  #Climatescope
  climatescope_invesments <- read.csv('country_investments_years.csv') %>% mutate(Country.Name=country_name) %>% select(Country.Name,investments_udmm,year)
     #Keep only the latest value
@@ -125,6 +181,14 @@ simpleCap <- function(x) {
  climatescope$Country.Name <- gsub("Sri-lanka",'Sri Lanka',climatescope$Country.Name,fixed=TRUE)
  climatescope$Country.Name <- gsub("Trinidad-and-tobago",'Trinidad and Tobago',climatescope$Country.Name,fixed=TRUE)
  
+ #Clean energy investments from IRENA
+ clean_investments <- read.csv('clean_energy_investments.csv') %>% mutate(Country.Name=Country,investments_udmm=investment,year=2017) %>% select(Country.Name,investments_udmm,year)
+    clean_investments$investments_udmm <- sub(",","",clean_investments$investments_udmm)
+    clean_investments$investments_udmm <- as.numeric(as.character(clean_investments$investments_udmm))
+        
+     # Calling climatescope and clean_investments financing
+    financing <- rbind(climatescope,clean_investments)
+
 
  #Fossil Fuels
  fossil_subsidies <- read.csv('fossil_subsidies.csv')
@@ -162,7 +226,24 @@ simpleCap <- function(x) {
 eco_print <- read.csv('ecological_footprint.csv') %>% mutate(Country.Name=Country.region)
     eco_print$Country.Name <- gsub('United States of America','United States',eco_print$Country.Name,fixed=TRUE)
     eco_print$Country.Name <- gsub('Viet Nam','Vietnam',eco_print$Country.Name,fixed=TRUE)
+    
 
+#Human Development Indicators
+hdi <- read.csv('/Users/diego/Desktop/Data/energy_transitions/HDI.csv') %>% mutate(Country.Name=Country) %>% gather(key='year',value='value',X1980:X2014)
+hdi$Country.Name <- trim(as.character(hdi$Country.Name))
+
+country_hdi_diff <- c()
+country_hdi_name <- c()
+for(i in 1:length(unique(hdi$Country.Name))){
+  country <- subset(hdi,hdi$Country.Name==unique(hdi$Country.Name)[i])
+  country <-  country[complete.cases(country$value),]
+  if(dim(country)[1]>0){
+    country_hdi_diff[i] <- tail(country$value,1) - head(country$value,1)
+    country_hdi_name[i] <- unique(country$Country.Name)
+  } else{}
+}
+
+hdi_diff <- data.frame(country_hdi_name,country_hdi_diff) %>% mutate(Country.Name=country_hdi_name,hdi_diff=country_hdi_diff)
  
  ###### EIA Data
  #Calculating the latest energy consumption for all countries from EIA Data
@@ -280,14 +361,43 @@ ggplot(eia_wb_imf,aes(rents,country_diff)) + geom_point(aes(size = Total_GDP,col
 
 # Climatescope and Other Resources
 
-eia_wb_climatescope <- merge(eia_fuel_merge,climatescope,by=c("Country.Name"))
+eia_wb_climatescope <- merge(eia_fuel_merge,financing,by=c("Country.Name"))
 eia_wb_climatescope$dollar_km <- (eia_wb_climatescope$investments_udmm*1000000)/eia_wb_climatescope$land_area
 eia_wb_climatescope$dollar_person <- (eia_wb_climatescope$investments_udmm*1000000)/eia_wb_climatescope$population
 
 missing_countries(eia_fuel_merge,eia_wb_climatescope)[[1]]
 missing_countries(eia_fuel_merge,eia_wb_climatescope)[[2]]
 
-ggplot(eia_wb_climatescope,aes(log(dollar_km),country_diff)) + geom_point(aes(size = investments_udmm,colour=dollar_person),alpha=0.4) + scale_colour_gradient(low = "grey", high = "blue") + geom_text(aes(label=Country.Name),hjust=0, vjust=-1,size = 2) + ylim(-20,60) + theme_bw() +theme(axis.line = element_line(colour = "grey"), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.border = element_blank(), panel.background = element_blank()) + theme(legend.position="bottom") + xlab("log(Dollars Invested per Square Kilometer)") + ylab("Percentage Point Change 1980-2014, Non-Hydro Renewable Energy Generation") + labs(size="Billions of Dollars ($US)", colour="$US Invested per Capita")
+ggplot(eia_wb_climatescope,aes(log(dollar_km),country_diff)) + geom_point(aes(size = investments_udmm,colour=log(dollar_person)),alpha=0.4) + scale_colour_gradient(low = "grey", high = "blue") + geom_text(aes(label=Country.Name),hjust=0, vjust=-1,size = 2) + ylim(-20,60) + theme_bw() +theme(axis.line = element_line(colour = "grey"), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.border = element_blank(), panel.background = element_blank()) + theme(legend.position="bottom") + xlab("log(Dollars Invested per Square Kilometer)") + ylab("Percentage Point Change 1980-2014, Non-Hydro Renewable Energy Generation") + labs(size="Billions of Dollars ($US)", colour="log($US Invested per Capita)")
+
+
+
+### Humand Development Impact Score and Energy Use
+
+sosi2 <- merge(energy_use_change,eia_diff,by=c('Country.Name'))
+sosi2 <- merge(sosi2,gdp_change,by=c('Country.Name'))
+sosi3 <- merge(sosi2,hdi_diff,by=c('Country.Name'))
+
+
+ggplot(sosi3,aes(country_diff,EUSE_pct_change)) + geom_point(aes(size=gdp_pct_change,colour=hdi_diff),alpha=0.4) + 
+  scale_colour_gradient(low = "white", high = "dark blue") + 
+  geom_text(data=subset(sosi2,sosi2$country_diff>2 | sosi2$country_diff< -1 | sosi2$EUSE_pct_change< -50 | 
+                          sosi2$EUSE_pct_change>30 | sosi2$Country.Name=="China" ),aes(country_diff,EUSE_pct_change,
+                                label=Country.Name),hjust=1, vjust=-1,size = 2) +  scale_size_continuous(range=c(1,8)) + geom_hline(aes(yintercept=0),colour="light grey") + geom_vline(aes(xintercept=0),colour="light grey") +
+  ylim(-100,100) + xlim(-15,60) + theme_bw() +theme(axis.line = element_line(colour = "grey"), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.border = element_blank(), panel.background = element_blank()) +
+ theme(legend.position="bottom") + xlab("Percentage Point Change 1980-2014, Non-Hydro Renewable Energy Generation") + ylab("% Change Energy Intensity (MJ/$2011 PPP GDP)") + labs(size="% Change GDP per Capita", colour="Change in HDI Score") +
+  annotate("text", x = 47, y = -90, label = "Efficient Low-Carbon Development") +
+  annotate("rect", xmin = 0, xmax = 60, ymin = 0, ymax = -100, alpha = .1,colour="dark green")
+
+
+
+
+
+
+
+
+
+# How have energy use intense 
 
 
 # Demand Downscaling
@@ -421,7 +531,46 @@ for (i in 1:length(unique(con_i_sub$Country.Name))) {
 options(warn=0)
 
 
+# Normalizing with respect to all countries and with respect only to countries that are undergoing a transition
 
+#Morocco 7.086989
+#Brazil 8.646916
+#New Zealand 14.988829
+#Mauritius 17.342795
+#Uruguay 16.954829
+#Turkey 5.047878		
+#Nicaragua
+#Kenya	20 
+#Chile 9.444131
+#Thailand 6.237303		
+#Costa Rica
+#Australia 7.911474		
+#Indonesia		
+#India			
 
+head(eia_diff_merge_policy)
+
+eia_diff_merge_policy$scaled_policy <- (eia_diff_merge_policy$policy_num - min(eia_diff_merge_policy$policy_num))/(max(eia_diff_merge_policy$policy_num) - min(eia_diff_merge_policy$policy_num))
+eia_diff_merge_policy$scaled_qoi <- (eia_diff_merge_policy$wef_qoi.x - min(eia_diff_merge_policy$wef_qoi.x,na.rm=TRUE))/(max(eia_diff_merge_policy$wef_qoi.x,na.rm=TRUE) - min(eia_diff_merge_policy$wef_qoi.x,na.rm=TRUE))
+#scaled_policy, scaled_qoi, icrg_qog.x
+
+eia_fuel_merge$scaled_pump_price <- (eia_fuel_merge$pump_price - min(eia_fuel_merge$pump_price,na.rm=TRUE))/(max(eia_fuel_merge$pump_price,na.rm=TRUE) - min(eia_fuel_merge$pump_price,na.rm=TRUE))
+#scaled_pump_price, fuel_exports, energy_imports
+
+eia_wb_imf$scaled_billions <- (eia_wb_imf$Total_Billions - min(eia_wb_imf$Total_Billions,na.rm=TRUE))/(max(eia_wb_imf$Total_Billions,na.rm=TRUE) - min(eia_wb_imf$Total_Billions,na.rm=TRUE))
+#rents,Total_GDP,scaled_billions
+
+eia_wb_climatescope$scaled_dollar_km <- (eia_wb_climatescope$dollar_km - min(eia_wb_climatescope$dollar_km,na.rm=TRUE))/(max(eia_wb_climatescope$dollar_km,na.rm=TRUE) - min(eia_wb_climatescope$dollar_km,na.rm=TRUE))
+eia_wb_climatescope$scaled_dollar_person <- (eia_wb_climatescope$dollar_person - min(eia_wb_climatescope$dollar_person,na.rm=TRUE))/(max(eia_wb_climatescope$dollar_person,na.rm=TRUE) - min(eia_wb_climatescope$dollar_person,na.rm=TRUE))
+eia_wb_climatescope$scaled_billions <- (eia_wb_climatescope$investments_udmm - min(eia_wb_climatescope$investments_udmm,na.rm=TRUE))/(max(eia_wb_climatescope$investments_udmm,na.rm=TRUE) - min(eia_wb_climatescope$investments_udmm,na.rm=TRUE))
+# scaled_dollar_km, scaled_dollar_person, scaled_billions
+
+#Writing the files for Allegra and Sophie
+
+write.csv(eia_diff_merge_policy[,c("Country.Name","scaled_policy", "scaled_qoi", "icrg_qog.x")],'URAP/policy.csv')
+write.csv(eia_fuel_merge[,c("Country.Name","scaled_pump_price", "fuel_exports", "energy_imports")],'URAP/fuel.csv')
+write.csv(eia_wb_imf[,c("Country.Name","rents", "Total_GDP","scaled_billions")],'URAP/subsidies.csv')
+write.csv(eia_wb_climatescope[,c("Country.Name","scaled_dollar_km","scaled_dollar_person","scaled_billions")],'URAP/invest.csv')
+write.csv(eia_diff_merge_policy[,c("Country.Name","country_diff")],'URAP/renewable_change.csv')
 
 
