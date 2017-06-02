@@ -861,13 +861,14 @@ for(i in 1:length(names(countries_above_2))){
 }
 
 # Dropping Repeated Variables
-drops <- c('Per.Capita.GDP','Built.up.land1','Population..millions','Population..millions.','Biocapacity.Deficit.or.Reserve')
+drops <- c("Income_Group",'Per.Capita.GDP','Built.up.land1','Population..millions','Population..millions.','Biocapacity.Deficit.or.Reserve')
 countries_above_2 <- countries_above_2[ ,!(names(countries_above_2) %in% drops)]
 
 
 #All Countries
 log_countries <- countries_above_2
 log_countries[,2:70]  <- log(log_countries[,2:70]+1)
+
 
 #Income
 higher_income <- subset(countries_above_2,countries_above_2$gdp_capita >30000)
@@ -890,8 +891,6 @@ data_above <- middle_log # countries_above_2, log_countries, middle_log
 
 
 #######
-
-
 
 #Full data set 
 x_countries_above_2 <- data_above[,-1] #Remove name
