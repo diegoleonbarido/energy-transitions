@@ -14,10 +14,13 @@
 ######
 
 # https://www.r-bloggers.com/principal-components-regression-pt-1-the-standard-method/
+# https://www.r-bloggers.com/principal-components-regression-pt-2-y-aware-methods/
+# http://www.win-vector.com/blog/2016/05/pcr_part3_pickk/
 # https://stackoverflow.com/questions/15376075/cluster-analysis-in-r-determine-the-optimal-number-of-clusters
 # https://www.r-bloggers.com/pca-and-k-means-clustering-of-delta-aircraft/
-# https://www.r-bloggers.com/principal-components-regression-pt-2-y-aware-methods/
 # http://www.sthda.com/english/wiki/principal-component-analysis-how-to-reveal-the-most-important-variables-in-your-data-r-software-and-data-mining#at_pco=smlwn-1.0&at_si=592b5aa2ee527e1a&at_ab=per-2&at_pos=0&at_tot=1
+# https://stackoverflow.com/questions/12760108/principal-components-analysis-how-to-get-the-contribution-of-each-paramete
+# https://stackoverflow.com/questions/15376075/cluster-analysis-in-r-determine-the-optimal-number-of-clusters
 
 #Libraries & Path
 library(dplyr)
@@ -248,8 +251,6 @@ energy_use_change <- data.frame(country_var_name,country_var_diff,country_var_di
 energy_use_change <- wb_names(energy_use_change)
 gdp_change <- data.frame(country_var_name,country_var_diff,country_var_diff_pct) %>% mutate(Country.Name=country_var_name,gdp_change=country_var_diff,gdp_pct_change=country_var_diff_pct) %>% select(Country.Name,gdp_change,gdp_pct_change)
 gdp_change <- wb_names(gdp_change)
-
-
 
 
 #Climatescope
@@ -524,6 +525,26 @@ eia_fuel_merge$Country.Name <- as.character(eia_fuel_merge$Country.Name)
 
 ggplot(eia_fuel_merge,aes(pump_price,country_diff)) + geom_point(aes(size = fuel_exports,colour=energy_imports),alpha=0.6) + scale_colour_gradient(low = "red", high = "light blue") + geom_text(aes(label=Country.Name),hjust=0, vjust=-1,size = 2) +xlim(0,2.5) + ylim(-20,60)+ theme_bw() +theme(axis.line = element_line(colour = "grey"), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.border = element_blank(), panel.background = element_blank()) + theme(legend.position="bottom") + xlab("Pump Price ($US/liter)") + ylab("Percentage Point Change 1980-2014, Non-Hydro Renewable Energy Generation") + labs(size="Fuel exports (% of merchandise exports)", colour="Energy imports, net (% of energy use)")
 
+# Price Attractiveness
+
+eia_price_attractiveness <- merge(eia_diff,price_attractiveness,by=c("Country.Name"))
+missing_countries(eia_diff,eia_price_attractiveness)[[1]]
+missing_countries(eia_diff,eia_price_attractiveness)[[2]]
+
+grouped_prices_mean <- aggregate(eia_price_attractiveness$amount_dol_mwh,by=list(eia_price_attractiveness$Country.Name),FUN=mean,na.rm=TRUE) %>% mutate(Country.Name=Group.1, Mean_Elec_Prices=x) %>% select(Country.Name,Mean_Elec_Prices)
+
+#Merging again to plot everything
+eia_price_attractivenessV2 <- merge(eia_fuel_merge,grouped_prices_mean,by=c("Country.Name"))
+
+ggplot(eia_price_attractivenessV2,aes(Mean_Elec_Prices,country_diff)) + geom_point(aes(size = fuel_exports,colour=energy_imports),alpha=0.6) + scale_colour_gradient(low = "red", high = "light blue") + geom_text(aes(label=Country.Name),hjust=0, vjust=-1,size = 2)  + ylim(-20,60)+ theme_bw() +theme(axis.line = element_line(colour = "grey"), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.border = element_blank(), panel.background = element_blank()) + theme(legend.position="bottom") + xlab("Mean Electricity Prices ($US/MWh)") + ylab("Percentage Point Change 1980-2014, Non-Hydro Renewable Energy Generation") + labs(size="Fuel exports (% of merchandise exports)", colour="Energy imports, net (% of energy use)")
+
+
+## Prepare for merge with data below
+eia_price_attractiveness_merge <- cast(eia_price_attractiveness,Country.Name~price_type,mean,value='amount_dol_mwh')
+
+
+
+
 # Resource Rents
 
 eia_wb_imf <- merge(eia_fuel_merge,fossil_subsidies)
@@ -548,19 +569,6 @@ missing_countries(eia_fuel_merge,eia_wb_climatescope)[[2]]
 ggplot(eia_wb_climatescope,aes(log(dollar_km),country_diff)) + geom_point(aes(size = investments_udmm,colour=log(dollar_person)),alpha=0.4) + scale_colour_gradient(low = "grey", high = "blue") + geom_text(aes(label=Country.Name),hjust=0, vjust=-1,size = 2) + ylim(-20,60) + theme_bw() +theme(axis.line = element_line(colour = "grey"), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.border = element_blank(), panel.background = element_blank()) + theme(legend.position="bottom") + xlab("log(Dollars Invested per Square Kilometer)") + ylab("Percentage Point Change 1980-2014, Non-Hydro Renewable Energy Generation") + labs(size="Billions of Dollars ($US)", colour="log($US Invested per Capita)")
 
 
-# Price Attractiveness
-
-eia_price_attractiveness <- merge(eia_diff,price_attractiveness,by=c("Country.Name"))
-    missing_countries(eia_diff,eia_price_attractiveness)[[1]]
-    missing_countries(eia_diff,eia_price_attractiveness)[[2]]
-    
-grouped_prices_mean <- aggregate(eia_price_attractiveness$amount_dol_mwh,by=list(eia_price_attractiveness$Country.Name),FUN=mean,na.rm=TRUE) %>% mutate(Country.Name=Group.1, Mean_Elec_Prices=x) %>% select(Country.Name,Mean_Elec_Prices)
-grouped_prices_mean_merge <- merge(grouped_prices_mean,eia_diff,by=c("Country.Name"))
-
-ggplot(grouped_prices_mean_merge,aes(Mean_Elec_Prices,country_diff)) + geom_point() + scale_colour_gradient(low = "grey", high = "blue") + geom_text(aes(label=Country.Name),hjust=0, vjust=-1,size = 2) + ylim(-20,60) + theme_bw() +theme(axis.line = element_line(colour = "grey"), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.border = element_blank(), panel.background = element_blank()) + theme(legend.position="bottom") + xlab("Mean: Spot, Retail, Commercial and Industrial Energy Prices ($US/MWh)") + ylab("Percentage Point Change 1980-2014, Non-Hydro Renewable Energy Generation") + labs(size="Billions of Dollars ($US)", colour="log($US Invested per Capita)")
-
-## Prepare for merge with data below
-eia_price_attractiveness_merge <- cast(eia_price_attractiveness,Country.Name~price_type,mean,value='amount_dol_mwh')
 
 
 

@@ -173,7 +173,13 @@ cat("number of clusters estimated by optimum average silhouette width:", pamk.be
 plot(pam(data, pamk.best$nc))
 
 # Three clusters as evaluated through the elbow method
-k <- kmeans(comp,5,nstart=50,iter.max = 1000)
+k <- kmeans(comp,3,nstart=50,iter.max = 1000)
+
+
+
+sil = silhouette(k$cluster, dis)
+windows() 
+plot(sil)
 
 palette(alpha(brewer.pal(9,'Set1'), 0.5))
 plot(comp[,1:5], col=k$clust, pch=16)
